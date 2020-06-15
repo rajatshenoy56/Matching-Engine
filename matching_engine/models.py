@@ -7,7 +7,7 @@ class Stock(db.Model):
     price = db.Column(db.Float, nullable = True)
     quantity = db.Column(db.Integer, nullable = False)
     # uid = db.Column(db.Integer, nullable = False)
-    # order_type = db.Column(db.String(20),nullable = False)
+    order_type = db.Column(db.String(20),nullable = False)
     # flavor = db.Column(db.String(20),nullable = False)
     # min_quantity = db.Column(db.Integer)
 
