@@ -8,11 +8,11 @@ class Stock(db.Model):
     quantity = db.Column(db.Integer, nullable = False)
     # uid = db.Column(db.Integer, nullable = False)
     order_type = db.Column(db.String(20),nullable = False)
-    # flavor = db.Column(db.String(20),nullable = False)
+    flavor = db.Column(db.String(20),nullable = False)
     # min_quantity = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Stock('{self.stock_code}','{self.trade_type}','{self.price}','{self.quantity}')"
+        return f"Stock('{self.order_id}','{self.stock_code}','{self.trade_type}','{self.price}','{self.quantity}','{self.flavor}')"
 
 class Trade(db.Model):
     buyer_id = db.Column(db.Integer, nullable = False)
