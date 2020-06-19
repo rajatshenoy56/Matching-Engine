@@ -20,6 +20,7 @@ order12 = Stock(order_id=12, stock_code="AM", trade_type="Bid", price=48, quanti
 order13 = Stock(order_id=13, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='market',flavor = 'partial')
 order14 = Stock(order_id=14, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='market',flavor = 'partial')
 '''
+'''
 order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=45, quantity=10, order_type='limit',flavor = 'allornone')
 order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='limit',flavor = 'allornone')
 order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=47, quantity=10, order_type='limit',flavor = 'allornone')
@@ -34,6 +35,7 @@ order11 = Stock(order_id=11, stock_code="AMZ", trade_type="Ask", price=48, quant
 order12 = Stock(order_id=12, stock_code="AM", trade_type="Bid", price=48, quantity=5, order_type='limit',flavor = 'partial')
 order13 = Stock(order_id=13, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'partial')
 order14 = Stock(order_id=14, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'partial')
+'''
 '''
 # limit order test case
 order8 = Stock(order_id=8, stock_code="AMZ", trade_type="Bid",
@@ -203,7 +205,7 @@ class Order_Queue(object):
             
         return match_list if len(match_list) > 0 else None
 
-
+'''
 order_queue = Order_Queue()
 order_queue.enqueue(order1)
 print(order_queue.match(order1))
@@ -246,3 +248,4 @@ print(order_queue.match(order13))
 
 order_queue.enqueue(order14)
 print(order_queue.match(order14))
+'''
