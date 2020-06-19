@@ -5,10 +5,10 @@ class Stock(db.Model):
     stock_code = db.Column(db.Integer, nullable = False)
     trade_type = db.Column(db.String(10), nullable = False)  #Bid and Ask
     price = db.Column(db.Float, nullable = True)
-    quantity = db.Column(db.Integer, nullable = False)
-    # uid = db.Column(db.Integer, nullable = False)
+    quantity = db.Column(db.Integer, nullable = False)    
     order_type = db.Column(db.String(20),nullable = False)
     flavor = db.Column(db.String(20),nullable = False)
+    username = db.Column(db.String(20), nullable = False)
     # min_quantity = db.Column(db.Integer)
 
     def __repr__(self):
