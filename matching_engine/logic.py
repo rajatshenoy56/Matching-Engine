@@ -94,7 +94,7 @@ class Order_Queue(object):
         # Match!
         match_list = []
         trade_type_new='Bid' if mo.trade_type=='Ask' else 'Ask'
-        for o in target_order_list:
+        for o in list(target_order_list):
             if mo.username!=o.username:
                 if mo.flavor == "allornone" and o.flavor == "allornone":
                     if mo.quantity == o.quantity :
