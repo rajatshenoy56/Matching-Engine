@@ -1,10 +1,11 @@
 from matching_engine.models import Stock, Trade
-# '''
-# market order test case:
-# order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=44, quantity=15, order_type='market',flavor = 'partial',username="Neha")
-# order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Ask", price=44, quantity=10, order_type='market',flavor = 'allornone',username="A")
-# order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=44, quantity=5, order_type='market',flavor = 'allornone',username="B")
-# '''
+
+#  stop and stop limit order test case:
+order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=42, quantity=15, order_type='limit',flavor = 'partial',username="Neha")
+order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Bid", price=44, quantity=5, order_type='limit',flavor = 'allornone',username="A")
+order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=47, quantity=5, order_type='limit',flavor = 'allornone',username="B")
+order4 = Stock(order_id=4, stock_code="AMZ", trade_type="Ask", quantity=5, order_type='stop',flavor = 'allornone',username="D",trigger_price =44)
+order5 = Stock(order_id=5, stock_code="AMZ", trade_type="Ask", price =43, quantity=5, order_type='stoplimit',flavor = 'allornone',username="e",trigger_price =42)
 
 # order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=45, quantity=10, order_type='market',flavor = 'allornone',username="A")
 # order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='market',flavor = 'allornone',username="B")
@@ -24,20 +25,19 @@ from matching_engine.models import Stock, Trade
 
 # order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'allornone',username="A")
 # order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='limit',flavor = 'allornone',username="B")
-'''
-order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=47, quantity=10, order_type='limit',flavor = 'allornone',username="C")
-order4 = Stock(order_id=4, stock_code="AMZ", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="D")
-order5 = Stock(order_id=5, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="E")
-order6 = Stock(order_id=6, stock_code="AM", trade_type="Bid", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="F")
-order7 = Stock(order_id=7, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'allornone',username="G")
-order8 = Stock(order_id=8, stock_code="AMZ", trade_type="Bid", price=45, quantity=5, order_type='limit',flavor = 'partial',username="H")
-order9 = Stock(order_id=9, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='limit',flavor = 'partial',username="I")
-order10 = Stock(order_id=10, stock_code="AMZ", trade_type="Bid", price=47, quantity=10, order_type='limit',flavor = 'partial',username="J")
-order11 = Stock(order_id=11, stock_code="AMZ", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'partial',username="K")
-order12 = Stock(order_id=12, stock_code="AM", trade_type="Bid", price=48, quantity=5, order_type='limit',flavor = 'partial',username="L")
-order13 = Stock(order_id=13, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'partial',username="M")
-order14 = Stock(order_id=14, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'partial',username="N")
-'''
+# order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=47, quantity=10, order_type='limit',flavor = 'allornone',username="C")
+# order4 = Stock(order_id=4, stock_code="AMZ", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="D")
+# order5 = Stock(order_id=5, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="E")
+# order6 = Stock(order_id=6, stock_code="AM", trade_type="Bid", price=48, quantity=5, order_type='limit',flavor = 'allornone',username="F")
+# order7 = Stock(order_id=7, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'allornone',username="G")
+# order8 = Stock(order_id=8, stock_code="AMZ", trade_type="Bid", price=45, quantity=5, order_type='limit',flavor = 'partial',username="H")
+# order9 = Stock(order_id=9, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='limit',flavor = 'partial',username="I")
+# order10 = Stock(order_id=10, stock_code="AMZ", trade_type="Bid", price=47, quantity=10, order_type='limit',flavor = 'partial',username="J")
+# order11 = Stock(order_id=11, stock_code="AMZ", trade_type="Ask", price=46, quantity=5, order_type='limit',flavor = 'partial',username="K")
+# order12 = Stock(order_id=12, stock_code="AM", trade_type="Bid", price=48, quantity=5, order_type='limit',flavor = 'partial',username="L")
+# order13 = Stock(order_id=13, stock_code="AM", trade_type="Ask", price=48, quantity=5, order_type='limit',flavor = 'partial',username="M")
+# order14 = Stock(order_id=14, stock_code="AM", trade_type="Bid", price=46, quantity=5, order_type='limit',flavor = 'partial',username="N")
+
 '''
 # limit order test case
 order8 = Stock(order_id=8, stock_code="AMZ", trade_type="Bid",
@@ -58,15 +58,36 @@ order14 = Stock(order_id=14, stock_code="AM", trade_type="Bid",
 
 class Order_Queue(object):
 
-    # The active_list is a dictionary.
     def __init__(self):
         self.active_list = {}
+        self.inactive_list = {}
 
     # Adding a new order.
     def enqueue(self, order):
-        if order.stock_code not in self.active_list.keys():
-            self.active_list[order.stock_code] = {'Bid': [], 'Ask': []}
-        self.active_list[order.stock_code][order.trade_type].append(order)
+        if order.order_type.lower() == "market" or order.order_type.lower() == "limit":
+            if order.stock_code not in self.active_list.keys():
+                self.active_list[order.stock_code] = {'Bid': [], 'Ask': []}
+            self.active_list[order.stock_code][order.trade_type].append(order)
+        else:
+            if order.stock_code not in self.inactive_list.keys():
+                self.inactive_list[order.stock_code] = []
+            self.inactive_list[order.stock_code].append(order)
+
+    #Pass a dict cmp of 5 current market prices of 5 companies
+    def activate(self,cmp):
+        to_be_activated=[]
+        for stock_code,orders in self.inactive_list.items():
+            to_be_activated = [x for x in orders if x.trigger_price >= cmp[stock_code]]
+            for order in to_be_activated:
+                self.inactive_list[stock_code].remove(order)
+                if order.order_type == 'stoplimit':#default set for market price
+                    order.order_type = "limit"
+                else:
+                    order.order_type = "market"
+                self.enqueue(order)
+                print(self.match(order))
+        print(self.active_list)
+        print(self.inactive_list)
 
     # Wrapper function for matching orders.
     def match(self, order):
@@ -153,10 +174,12 @@ class Order_Queue(object):
         # Get the list of orders we are supposed to match against.
         if lo.trade_type == 'Bid':
             target_order_list = self.active_list[lo.stock_code]['Ask']
-            target_order_list.sort(key=lambda x: x.price)
+            target_order_sorted = list(target_order_list)
+            target_order_sorted.sort(key=lambda x: x.price)
         else:
             target_order_list = self.active_list[lo.stock_code]['Bid']
-            target_order_list.sort(key=lambda x: x.price, reverse=True)
+            target_order_sorted = list(target_order_list)
+            target_order_sorted.sort(key=lambda x: x.price, reverse=True)
 
         # Match!
         #match_list = []
@@ -179,10 +202,11 @@ class Order_Queue(object):
         #print(target_order_list)
         match_list = []
         # trade_type_new='Bid' if lo.trade_type=='Ask' else 'Ask'
-        for o in list(target_order_list):
+        for o in target_order_sorted:
             if lo.username!=o.username:           
                 if lo.flavor == "allornone" and o.flavor == "allornone":
-                    if lo.quantity == o.quantity and lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price:
+                    if lo.quantity == o.quantity and (lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price):
+                        # print("LL")
                         price_to_return=lo.price if lo.price<=o.price else o.price
                         match_list.append([o,lo,price_to_return,o.quantity])
                         # target_order_list=[x for x in target_order_list if x!=o]                  
@@ -194,7 +218,7 @@ class Order_Queue(object):
                         break
                     
                 elif lo.flavor == "partial" and o.flavor == "allornone":
-                    if lo.quantity >= o.quantity and lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price:
+                    if lo.quantity >= o.quantity and (lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price):
                         price_to_return=lo.price if lo.price<=o.price else o.price
                         match_list.append([o,lo,price_to_return,o.quantity])
                         lo.quantity = lo.quantity - o.quantity
@@ -207,7 +231,7 @@ class Order_Queue(object):
                         # print("list",target_order_list)
                         # print("dic",self.active_list)
                 elif lo.flavor == "allornone" and o.flavor == "partial":
-                    if lo.quantity <= o.quantity and lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price:
+                    if lo.quantity <= o.quantity and (lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price):
                         price_to_return=lo.price if lo.price<=o.price else o.price
                         match_list.append([o,lo,price_to_return,lo.quantity])
                         o.quantity = o.quantity - lo.quantity
@@ -243,20 +267,22 @@ class Order_Queue(object):
                     # print("dic",self.active_list)           
         return match_list if len(match_list) > 0 else None
 
-# order_queue = Order_Queue()
-# order_queue.enqueue(order1)
-# print(order_queue.match(order1))
+order_queue = Order_Queue()
+order_queue.enqueue(order1)
+print(order_queue.match(order1))
 
-# order_queue.enqueue(order2)
-# print(order_queue.match(order2))
+order_queue.enqueue(order2)
+print(order_queue.match(order2))
 
-# order_queue.enqueue(order3)
-# print(order_queue.match(order3))
+order_queue.enqueue(order3)
+print(order_queue.match(order3))
 
-# order_queue.enqueue(order4)
+order_queue.enqueue(order4) # only enqueue stop and stop loss ;dont match them
+
 # print(order_queue.match(order4))
 
-# order_queue.enqueue(order5)
+order_queue.enqueue(order5)
+order_queue.activate({"AMZ":40})
 # print(order_queue.match(order5))
 
 # order_queue.enqueue(order6)

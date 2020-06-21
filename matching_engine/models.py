@@ -9,6 +9,7 @@ class Stock(db.Model):
     order_type = db.Column(db.String(20),nullable = False)
     flavor = db.Column(db.String(20),nullable = False)
     username = db.Column(db.String(20), nullable = False)
+    trigger_price = db.Column(db.Integer, nullable = True)
     # min_quantity = db.Column(db.Integer)
 
     def __repr__(self):
