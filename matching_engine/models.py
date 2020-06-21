@@ -16,9 +16,14 @@ class Stock(db.Model):
         return f"Stock('{self.order_id}','{self.stock_code}','{self.trade_type}','{self.price}','{self.quantity}','{self.flavor}')"
 
 class Trade(db.Model):
-    buyer_id = db.Column(db.Integer, nullable = False)
-    seller_id = db.Column(db.Integer,nullable = False)
+    trade_id = db.Column(db.Integer, primary_key = True)
+    buyer_name = db.Column(db.String(20), nullable = False)
+    seller_name = db.Column(db.String(20),nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
     price = db.Column(db.Float, nullable = False)
     stock_code = db.Column(db.Integer, db.ForeignKey('stock.stock_code'), nullable = False)
-    order_id = db.Column(db.Integer, primary_key = True)
+
+    def __repr__(self):
+        return f"Trade('{self.trade_id}','{self.buyer_name}','{self.seller_name}','{self.quantity}','{self.price}','{self.stock_code}')"
+db.create_all()
+
