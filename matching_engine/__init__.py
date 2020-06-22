@@ -1,15 +1,18 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
+from matching_engine import logic
+from matching_engine import mockServer
+
 @app.route('/hello')
 def hello():
     return 'hello'
 
-from matching_engine import logic
 
 queue = logic.Order_Queue()
 last_order_id = 0
@@ -35,3 +38,7 @@ def place_order():
     queue.enqueue(order)
 
     return queue.match(order)
+
+@app.route('/getPrice')
+def getMarketPrice():
+    return json.dumps(mockServer.stocks)
