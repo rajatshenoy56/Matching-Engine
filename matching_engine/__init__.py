@@ -58,7 +58,8 @@ def place_order():
 
     return 'ACK'
 
-@app.route('/history', methods=['POST', 'GET'])
+@app.route('/history', methods=['POST'])
+@cross_origin() 
 def history():
     unmatched = []
     matched = []
@@ -68,29 +69,35 @@ def history():
 
     for stock_code in queue.active_list.keys():
         for order in queue.active_list[stock_code]['Bid']:
-            if(order['username'] == username):
+            if(order.username == username):
                 queued.append(order)
         for order in queue.active_list[stock_code]['Ask']:
-            if(order['username'] == username):
+            if(order.username == username):
                 queued.append(order)
 
     for stock_code in queue.inactive_list.keys():
         for order in queue.active_list[stock_code]:
-            if(order['username'] == username):
+            if(order.username == username):
                 queued.append(order)
 
     trades = logic.Trade.query.filter_by(buyer_name=username).all()
-    if len(trades) > 0 :
-        matched.append(*trades)
+    if(len(trades) > 0):
+        matched = matched + trades
     
     
     trades = logic.Trade.query.filter_by(seller_name=username).all()
     if(len(trades) > 0):
-        matched.append(*trades)
-    
+        matched = matched + trades
+
+    for i in range(0, len(unmatched_orders)):
+        unmatched.append(unmatched_orders[i].__repr__())
+    for i in range(0, len(matched)):
+        matched[i] = matched[i].__repr__()
+    for i in range(0, len(queued)):
+        queued[i] = queued[i].__repr__()
 
     return json.dumps({
-        'unmatched': unmatched_orders,
+        'unmatched': unmatched,
         'matched': matched,
         'queued': queued
     })
