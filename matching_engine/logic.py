@@ -69,6 +69,7 @@ class Order_Queue(object):
     # Wrapper function for matching orders.
     def match(self, order):
         # Perform the appropriate matching.
+        match_list=None
         if order.order_type.lower() == "market":
             match_list = self.match_market(order)
         elif order.order_type.lower() == "limit":
