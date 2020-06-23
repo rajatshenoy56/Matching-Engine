@@ -1,9 +1,11 @@
 from matching_engine import app, db
 from matching_engine.models import Stock, Trade
 #  stop and stop limit order test case:
+'''
 order1 = Stock(order_id=1, stock_code="AMZ", trade_type="Bid", price=50, quantity=10, order_type='market',flavor = 'partial',username="Neha")
 order2 = Stock(order_id=2, stock_code="AMZ", trade_type="Bid", price=45, quantity=15, order_type='limit',flavor = 'partial',username="A")
 order3 = Stock(order_id=3, stock_code="AMZ", trade_type="Ask", price=47, quantity=15, order_type='market',flavor = 'allornone',username="B")
+'''
 #order4 = Stock(order_id=4, stock_code="AMZ", trade_type="Ask", quantity=5, order_type='stop',flavor = 'allornone',username="D",trigger_price =44)
 #order5 = Stock(order_id=5, stock_code="AMZ", trade_type="Ask", price =43, quantity=5, order_type='stoplimit',flavor = 'allornone',username="e",trigger_price =42)
 
@@ -85,19 +87,16 @@ class Order_Queue(object):
                 else:
                     order.order_type = "market"
                 self.enqueue(order)
-                print(self.match(order))
-        print(self.active_list)
-        print(self.inactive_list)
 
     # Wrapper function for matching orders.
     def match(self, order):
 
-        # Perform the appropriate matching.        
+        # Perform the appropriate matching.
         if order.order_type.lower() == "market":
             match_list = self.match_market(order)
         elif order.order_type.lower() == "limit":
             match_list = self.match_limit(order)
-        if match_list is not None:            
+        if match_list is not None:
             for m in match_list:
                 if m[0].trade_type=='Bid':
                     buyer=m[0].username
@@ -121,36 +120,36 @@ class Order_Queue(object):
     # Matching only market orders.
     def match_market(self, mo):
         # Get the list of orders we are supposed to match against.
-        
+
         if mo.trade_type == 'Bid':
             target_order_list = self.active_list[mo.stock_code]['Ask']
         else:
-            target_order_list = self.active_list[mo.stock_code]['Bid']        
+            target_order_list = self.active_list[mo.stock_code]['Bid']
         # Match!
         match_list = []
         # trade_type_new='Bid' if mo.trade_type=='Ask' else 'Ask'
         for o in list(target_order_list):
             if mo.username!=o.username:
-                if mo.flavor == "allornone" and o.flavor == "allornone":                    
+                if mo.flavor == "allornone" and o.flavor == "allornone":
                     if mo.quantity == o.quantity :
                         match_list.append([o,mo,o.price,o.quantity])
                         target_order_list.remove(o)
                         # target_order_list=[x for x in target_order_list if x!=o]
-                        # self.active_list[mo.stock_code][trade_type_new].remove(o)                    
+                        # self.active_list[mo.stock_code][trade_type_new].remove(o)
                         break
-                elif mo.flavor == "partial" and o.flavor == "allornone":                    
+                elif mo.flavor == "partial" and o.flavor == "allornone":
                     if mo.quantity >= o.quantity:
                         match_list.append([o,mo,o.price,o.quantity])
                         mo.quantity = mo.quantity - o.quantity
                         target_order_list.remove(o)
                         # target_order_list=[x for x in target_order_list if x!=o]
-                        # self.active_list[mo.stock_code][trade_type_new].remove(o)                    
+                        # self.active_list[mo.stock_code][trade_type_new].remove(o)
                         if mo.quantity == 0:
                             self.active_list[mo.stock_code][mo.trade_type].remove(mo)
                             break
-                elif mo.flavor == "allornone" and o.flavor == "partial":                    
-                    if mo.quantity <= o.quantity:                        
-                        match_list.append([o,mo,o.price,mo.quantity])                        
+                elif mo.flavor == "allornone" and o.flavor == "partial":
+                    if mo.quantity <= o.quantity:
+                        match_list.append([o,mo,o.price,mo.quantity])
                         o.quantity = o.quantity - mo.quantity
                         if o.quantity == 0:
                             target_order_list.remove(o)
@@ -158,7 +157,7 @@ class Order_Queue(object):
                             # self.active_list[mo.stock_code][trade_type_new].remove(o)
                             #target_order_list=[x for x in target_order_list if x!=o]
                         break
-                elif mo.flavor == "partial" and o.flavor == "partial":                    
+                elif mo.flavor == "partial" and o.flavor == "partial":
                     if mo.quantity <= o.quantity:
                         match_list.append([o,mo,o.price,mo.quantity])
                         o.quantity = o.quantity - mo.quantity
@@ -175,10 +174,10 @@ class Order_Queue(object):
                         target_order_list.remove(o)
                         # target_order_list=[x for x in target_order_list if x!=o]
                         # self.active_list[mo.stock_code][trade_type_new].remove(o)
-                        #target_order_list=[x for x in target_order_list if x!=o]                    
+                        #target_order_list=[x for x in target_order_list if x!=o]
 
         # Return null on unsuccessful matching
-        if mo in self.active_list[mo.stock_code][mo.trade_type]:            
+        if mo in self.active_list[mo.stock_code][mo.trade_type]:
             self.active_list[mo.stock_code][mo.trade_type].remove(mo)
         return match_list if len(match_list) > 0 else None
 
@@ -210,26 +209,26 @@ class Order_Queue(object):
                     break
         '''
         # Return null on unsuccessful matching
-     
+
         # Match!
         #print(target_order_list)
         match_list = []
         # trade_type_new='Bid' if lo.trade_type=='Ask' else 'Ask'
         for o in target_order_sorted:
-            if lo.username!=o.username:           
+            if lo.username!=o.username:
                 if lo.flavor == "allornone" and o.flavor == "allornone":
                     if lo.quantity == o.quantity and (lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price):
                         # print("LL")
                         price_to_return=lo.price if lo.price<=o.price else o.price
                         match_list.append([o,lo,price_to_return,o.quantity])
-                        # target_order_list=[x for x in target_order_list if x!=o]                  
+                        # target_order_list=[x for x in target_order_list if x!=o]
                         # self.active_list[lo.stock_code][trade_type_new].remove(o)
-                        target_order_list.remove(o) 
+                        target_order_list.remove(o)
                         #print(self.active_list[lo.stock_code][trade_type_new])
                         # print("list",target_order_list)
-                        # print("dic",self.active_list) 
+                        # print("dic",self.active_list)
                         break
-                    
+
                 elif lo.flavor == "partial" and o.flavor == "allornone":
                     if lo.quantity >= o.quantity and (lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price):
                         price_to_return=lo.price if lo.price<=o.price else o.price
@@ -252,10 +251,10 @@ class Order_Queue(object):
                         if o.quantity == 0:
                             target_order_list.remove(o)
                             # target_order_list=[x for x in target_order_list if x!=o]
-                            # self.active_list[lo.stock_code][trade_type_new].remove(o)   
+                            # self.active_list[lo.stock_code][trade_type_new].remove(o)
                         # print("list",target_order_list)
-                        # print("dic",self.active_list)        
-                        break             
+                        # print("dic",self.active_list)
+                        break
                 elif lo.flavor == "partial" and o.flavor == "partial":
                     if lo.quantity <= o.quantity:
                         if lo.price>=o.price if lo.trade_type=='Bid' else lo.price<=o.price:
@@ -265,8 +264,8 @@ class Order_Queue(object):
                             if o.quantity == 0:
                                 target_order_list.remove(o)
                                 # target_order_list=[x for x in target_order_list if x!=o]
-                                # self.active_list[lo.stock_code][trade_type_new].remove(o)                            
-                            
+                                # self.active_list[lo.stock_code][trade_type_new].remove(o)
+
                             self.active_list[lo.stock_code][lo.trade_type].remove(lo)
                             break
                     else:
@@ -275,11 +274,13 @@ class Order_Queue(object):
                         lo.quantity = lo.quantity - o.quantity
                         target_order_list.remove(o)
                         # target_order_list=[x for x in target_order_list if x!=o]
-                        # self.active_list[lo.stock_code][trade_type_new].remove(o)    
+                        # self.active_list[lo.stock_code][trade_type_new].remove(o)
                     # print("list",target_order_list)
-                    # print("dic",self.active_list)           
+                    # print("dic",self.active_list)
         return match_list if len(match_list) > 0 else None
 
+
+'''
 order_queue = Order_Queue()
 order_queue.enqueue(order1)
 print(order_queue.match(order1))
@@ -289,7 +290,7 @@ print(order_queue.match(order2))
 
 order_queue.enqueue(order3)
 print(order_queue.match(order3))
-'''
+
 order_queue.enqueue(order4) # only enqueue stop and stop loss ;dont match them
 
 # print(order_queue.match(order4))

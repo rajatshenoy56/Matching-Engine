@@ -16,9 +16,9 @@ def hello():
 
 queue = logic.Order_Queue()
 last_order_id = 0
+unmatched_orders = []
 
-
-@app.route('/place_order', methods=['POST', 'GET'])
+@app.route('/place_order', methods=['POST'])
 def place_order():
 
     global last_order_id
@@ -26,6 +26,7 @@ def place_order():
     last_order_id = last_order_id + 1
 
     order = logic.Stock(
+                        username   = request.form['username'],
                         order_id   = last_order_id,
                         stock_code = request.form['stock_code'],
                         trade_type = request.form['trade_type'],
@@ -37,7 +38,50 @@ def place_order():
 
     queue.enqueue(order)
 
-    return queue.match(order)
+    match_list = queue.match(order)
+
+    if(len(match_list) == 0):
+        if(order.order_type == 'market')
+            unmatched_orders.append(order)
+
+    return 'ACK'
+
+@app.route('/history', methods=['POST', 'GET'])
+def history():
+    unmatched = []
+    matched = []
+    queued = []
+
+    username = request.form['username']
+
+    for stock_code in queue.active_list.keys():
+        for order in queue.active_list[stock_code]['Bid']:
+            if(order['username'] == username):
+                queued.append(order)
+        for order in queue.active_list[stock_code]['Ask']:
+            if(order['username'] == username):
+                queued.append(order)
+
+    for stock_code in queue.inactive_list.keys():
+        for order in queue.active_list[stock_code]:
+            if(order['username'] == username):
+                queued.append(order)
+
+    trades = logic.Trade.query.filter_by(buyer_name=username).all()
+    if(len(trades) > 0){
+        matched.append(*trades)
+    }
+    
+    trades = logic.Trade.query.filter_by(seller_name=username).all()
+    if(len(trades) > 0){
+        matched.append(*trades)
+    }
+
+    return json.dumps({
+        'unmatched': unmatched_orders,
+        'matched': matched,
+        'queued': queued
+    })
 
 @app.route('/getPrice')
 def getMarketPrice():

@@ -37,8 +37,5 @@ def computePrices():
                 stocks[key] += stocks[key]*percent/100
             count+=1
         time.sleep(10)
-        print(stocks)
-
-
 
 _thread.start_new_thread(computePrices, ())
