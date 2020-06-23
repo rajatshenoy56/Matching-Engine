@@ -13,7 +13,15 @@ class Stock(db.Model):
     # min_quantity = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Stock('{self.order_id}','{self.stock_code}','{self.trade_type}','{self.price}','{self.quantity}','{self.flavor}')"
+        return {
+            'order_id': self.order_id,
+            'trade_type': self.trade_type,
+            'order_type': self.order_type,
+            'quantity': self.quantity,
+            'price': self.price,
+            'stock_code': self.stock_code,
+            'flavor': self.flavor
+        }
 
 class Trade(db.Model):
     trade_id = db.Column(db.Integer, primary_key = True)
@@ -24,6 +32,14 @@ class Trade(db.Model):
     stock_code = db.Column(db.Integer, db.ForeignKey('stock.stock_code'), nullable = False)
 
     def __repr__(self):
-        return f"Trade('{self.trade_id}','{self.buyer_name}','{self.seller_name}','{self.quantity}','{self.price}','{self.stock_code}')"
+        return {
+            'trade_id': self.trade_id,
+            'buyer_name': self.buyer_name,
+            'seller_name': self.seller_name,
+            'quantity': self.quantity,
+            'price': self.price,
+            'stock_code': self.stock_code
+        }
+
 db.create_all()
 

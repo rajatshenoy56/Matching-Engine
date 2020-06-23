@@ -41,18 +41,18 @@ def place_order():
     match_list = queue.match(order)
 
     if(len(match_list) == 0):
-        if(order.order_type == 'market')
+        if(order.order_type == 'market'):
             unmatched_orders.append(order)
 
     return 'ACK'
 
 @app.route('/history', methods=['POST', 'GET'])
 def history():
-    unmatched = []
+    unmatched = unmatched_orders
     matched = []
     queued = []
 
-    username = request.form['username']
+    username = request.args.get('username')
 
     for stock_code in queue.active_list.keys():
         for order in queue.active_list[stock_code]['Bid']:
@@ -68,14 +68,20 @@ def history():
                 queued.append(order)
 
     trades = logic.Trade.query.filter_by(buyer_name=username).all()
-    if(len(trades) > 0){
-        matched.append(*trades)
-    }
+    if(len(trades) > 0):
+        matched = matched + trades
+    
     
     trades = logic.Trade.query.filter_by(seller_name=username).all()
-    if(len(trades) > 0){
-        matched.append(*trades)
-    }
+    if(len(trades) > 0):
+        matched = matched + trades
+
+    for i in range(0, len(unmatched)):
+        unmatched[i] = unmatched[i].__repr__()
+    for i in range(0, len(matched)):
+        matched[i] = matched[i].__repr__()
+    for i in range(0, len(queued)):
+        queued[i] = queued[i].__repr__()
 
     return json.dumps({
         'unmatched': unmatched_orders,
