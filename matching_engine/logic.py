@@ -87,6 +87,8 @@ class Order_Queue(object):
                 else:
                     order.order_type = "market"
                 self.enqueue(order)
+        return to_be_activated
+                
 
     # Wrapper function for matching orders.
     def match(self, order):

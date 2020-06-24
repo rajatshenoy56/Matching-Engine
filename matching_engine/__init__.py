@@ -38,7 +38,7 @@ def place_order():
     global last_order_id
     global queue
     last_order_id = last_order_id + 1
-
+    
     order = logic.Stock(username=request.form['username'],
                         order_id=last_order_id,
                         stock_code=request.form['stock_code'],
@@ -47,7 +47,8 @@ def place_order():
                         quantity=int(request.form['quantity']),
                         order_type=request.form['order_type'],
                         flavor=request.form['flavor'])
-
+    if(order.order_type == 'stop'):
+        order.trigger_price=order.price
     queue.enqueue(order)
 
     match_list = queue.match(order)
@@ -77,7 +78,7 @@ def history():
                 queued.append(order)
 
     for stock_code in queue.inactive_list.keys():
-        for order in queue.active_list[stock_code]:
+        for order in queue.inactive_list[stock_code]:
             if (order.username == username):
                 queued.append(order)
 
@@ -137,14 +138,23 @@ def edit():
 
 def remove():
     order_id = int(request.form['order_id'])
-    print(queue.active_list)
-    print(queue.inactive_list)
-    queue.active_list = [order for order in queue.active_list if order.order_id != order_id]
-    queue.inactive_list = [order for order in queue.inactive_list if order.order_id != order_id]
+   
+    for stock_code in queue.active_list.keys():
+        queue.active_list[stock_code]['Bid'] = [order for order in queue.active_list[stock_code]['Bid'] if order.order_id != order_id]
+        queue.active_list[stock_code]['Ask'] = [order for order in queue.active_list[stock_code]['Ask'] if order.order_id != order_id]
+               
+    for stock_code in queue.inactive_list.keys():
+        queue.inactive_list[stock_code] = [order for order in queue.inactive_list[stock_code] if order.order_id != order_id]
 
     return 'ACK'
 
 
 @app.route('/getPrice', methods=['GET'])
 def getMarketPrice():
+    to_be_activated=queue.activate(mockServer.stocks)
+    for order in to_be_activated:
+        match_list = queue.match(order)
+        if (len(match_list) == 0):
+            if (order.order_type == 'market'):
+                unmatched_orders.append(order)
     return json.dumps(mockServer.stocks)
