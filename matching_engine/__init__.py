@@ -104,6 +104,8 @@ def history():
 
 
 @app.route('/edit', methods=['POST'])
+@cross_origin()
+
 def edit():
     order_id = int(request.form['order_id'])
 
@@ -131,8 +133,12 @@ def edit():
     return 'ACK'
 
 @app.route('/remove', methods = ['POST'])
+@cross_origin()
+
 def remove():
-    order_id = request.form['order_id']
+    order_id = int(request.form['order_id'])
+    print(queue.active_list)
+    print(queue.inactive_list)
     queue.active_list = [order for order in queue.active_list if order.order_id != order_id]
     queue.inactive_list = [order for order in queue.inactive_list if order.order_id != order_id]
 
