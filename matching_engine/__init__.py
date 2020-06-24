@@ -132,9 +132,14 @@ def edit():
 
 @app.route('/remove', methods = ['POST'])
 def remove():
-    order_id = request.form['order_id']
-    queue.active_list = [order for order in queue.active_list if order.order_id != order_id]
-    queue.inactive_list = [order for order in queue.inactive_list if order.order_id != order_id]
+    order_id = int(request.form['order_id'])
+   
+    for stock_code in queue.active_list.keys():
+        queue.active_list[stock_code]['Bid'] = [order for order in queue.active_list[stock_code]['Bid'] if order.order_id != order_id]
+        queue.active_list[stock_code]['Ask'] = [order for order in queue.active_list[stock_code]['Ask'] if order.order_id != order_id]
+               
+    for stock_code in queue.inactive_list.keys():
+        queue.inactive_list[stock_code] = [order for order in queue.inactive_list[stock_code] if order.order_id != order_id]
 
     return 'ACK'
 
