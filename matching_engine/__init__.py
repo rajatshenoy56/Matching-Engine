@@ -12,18 +12,71 @@ db = SQLAlchemy(app)
 
 from matching_engine import logic
 from matching_engine import mockServer
+from matching_engine.models import UnMatched, Queued, InActive
+from random import seed, randint
+
+queue = logic.Order_Queue()
+unmatched_orders = []
 
 
 @app.route('/hello')
 def hello():
-
     return "Hello"
 
 
-queue = logic.Order_Queue()
-last_order_id = 0
-unmatched_orders = []
+def loadData():
+    global unmatched_orders
+    global queue
 
+    for order in UnMatched.query.all():
+        stock = logic.Stock(
+                            username   = order.username,
+                            order_id   = order.order_id,
+                            trade_type = order.trade_type,
+                            order_type = order.order_type,
+                            quantity   = order.quantity,
+                            price      = order.price,
+                            stock_code = order.stock_code,
+                            flavor     = order.flavor
+                           )
+
+        unmatched_orders.append(stock)
+        db.session.delete(order)
+
+    for order in Queued.query.all():
+        stock = logic.Stock(
+                            username   = order.username,
+                            order_id   = order.order_id,
+                            trade_type = order.trade_type,
+                            order_type = order.order_type,
+                            quantity   = order.quantity,
+                            price      = order.price,
+                            stock_code = order.stock_code,
+                            flavor     = order.flavor
+                           )
+
+        queue.enqueue(stock)
+        db.session.delete(order)
+
+    for order in InActive.query.all():
+        stock = logic.Stock(
+                            username   = order.username,
+                            order_id   = order.order_id,
+                            trade_type = order.trade_type,
+                            order_type = order.order_type,
+                            quantity   = order.quantity,
+                            price      = order.price,
+                            stock_code = order.stock_code,
+                            flavor     = order.flavor
+                           )
+
+        queue.enqueue(stock)
+        db.session.delete(order)
+
+    db.session.commit()
+
+
+loadData()
 
 @app.route('/')
 def Demo():
@@ -32,21 +85,18 @@ def Demo():
 
 @app.route('/place_order', methods=['POST'])
 def place_order():
-
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-
-    global last_order_id
     global queue
-    last_order_id = last_order_id + 1
-    
-    order = logic.Stock(username=request.form['username'],
-                        order_id=last_order_id,
-                        stock_code=request.form['stock_code'],
-                        trade_type=request.form['trade_type'],
-                        price=float(request.form['price']),
-                        quantity=int(request.form['quantity']),
-                        order_type=request.form['order_type'],
-                        flavor=request.form['flavor'])
+
+    order = logic.Stock(
+                        username    = request.form['username'],
+                        order_id    = randint(10000, 99999),
+                        stock_code  = request.form['stock_code'],
+                        trade_type  = request.form['trade_type'],
+                        price       = float(request.form['price']),
+                        quantity    = int(request.form['quantity']),
+                        order_type  = request.form['order_type'],
+                        flavor      = request.form['flavor']
+                       )
     if(order.order_type == 'stop'):
         order.trigger_price=order.price
     queue.enqueue(order)
@@ -91,7 +141,8 @@ def history():
         matched = matched + trades
 
     for i in range(0, len(unmatched_orders)):
-        unmatched.append(unmatched_orders[i].__repr__())
+        if unmatched_orders[i].username == username:
+            unmatched.append(unmatched_orders[i].__repr__())
     for i in range(0, len(matched)):
         matched[i] = matched[i].__repr__()
     for i in range(0, len(queued)):
@@ -106,7 +157,6 @@ def history():
 
 @app.route('/edit', methods=['POST'])
 @cross_origin()
-
 def edit():
     order_id = int(request.form['order_id'])
 
@@ -125,24 +175,32 @@ def edit():
             if (order.order_id == order_id):
                 target_order = order
                 break
-    
+
     if target_order is not None:
-        target_order.price = price
+
+        if(target_order.order_type != 'stop'):
+            target_order.price = price
+
         target_order.quantity = quantity
         target_order.flavor = flavor
+
+        if target_order.order_type == 'stop':
+            target_order.trigger_price = price
+        elif target_order.order_type == 'stoplimit':
+            target_order.trigger_price = request.form['trigger_price']
+
 
     return 'ACK'
 
 @app.route('/remove', methods = ['POST'])
 @cross_origin()
-
 def remove():
     order_id = int(request.form['order_id'])
-   
+
     for stock_code in queue.active_list.keys():
         queue.active_list[stock_code]['Bid'] = [order for order in queue.active_list[stock_code]['Bid'] if order.order_id != order_id]
         queue.active_list[stock_code]['Ask'] = [order for order in queue.active_list[stock_code]['Ask'] if order.order_id != order_id]
-               
+
     for stock_code in queue.inactive_list.keys():
         queue.inactive_list[stock_code] = [order for order in queue.inactive_list[stock_code] if order.order_id != order_id]
 
@@ -158,3 +216,65 @@ def getMarketPrice():
             if (order.order_type == 'market'):
                 unmatched_orders.append(order)
     return json.dumps(mockServer.stocks)
+
+
+def saveData():
+    for order in unmatched_orders :
+        unmatched = UnMatched(
+                                username = order.username,
+                                order_id = order.order_id,
+                                trade_type = order.trade_type,
+                                order_type = order.order_type,
+                                quantity = order.quantity,
+                                price = order.price,
+                                stock_code = order.stock_code,
+                                flavor = order.flavor
+                             )
+
+        db.session.add(unmatched)
+
+    for stock_code in queue.active_list.keys():
+        for order in queue.active_list[stock_code]['Bid'] :
+            queued = Queued(
+                                username = order.username,
+                                order_id = order.order_id,
+                                trade_type = order.trade_type,
+                                order_type = order.order_type,
+                                quantity = order.quantity,
+                                price = order.price,
+                                stock_code = order.stock_code,
+                                flavor = order.flavor
+                             )
+            db.session.add(queued)
+
+        for order in queue.active_list[stock_code]['Ask'] :
+            queued = Queued(
+                                username = order.username,
+                                order_id = order.order_id,
+                                trade_type = order.trade_type,
+                                order_type = order.order_type,
+                                quantity = order.quantity,
+                                price = order.price,
+                                stock_code = order.stock_code,
+                                flavor = order.flavor
+                             )
+            db.session.add(queued)
+
+    for stock_code in queue.inactive_list.keys():
+        for order in queue.inactive_list[stock_code] :
+            inactive = InActive(
+                                username   = order.username,
+                                order_id   = order.order_id,
+                                trade_type = order.trade_type,
+                                order_type = order.order_type,
+                                quantity   = order.quantity,
+                                price      = order.price,
+                                stock_code = order.stock_code,
+                                flavor     = order.flavor
+                               )
+            db.session.add(inactive)
+
+    db.session.commit()
+
+import atexit
+atexit.register(saveData)
