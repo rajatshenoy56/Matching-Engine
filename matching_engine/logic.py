@@ -128,12 +128,16 @@ class Order_Queue(object):
 
         if mo.trade_type == 'Bid':
             target_order_list = self.active_list[mo.stock_code]['Ask']
+            target_order_sorted = list(target_order_list)
+            target_order_sorted.sort(key=lambda x: x.price)
         else:
             target_order_list = self.active_list[mo.stock_code]['Bid']
+            target_order_sorted = list(target_order_list)
+            target_order_sorted.sort(key=lambda x: x.price, reverse=True)
         # Match!
         match_list = []
         # trade_type_new='Bid' if mo.trade_type=='Ask' else 'Ask'
-        for o in list(target_order_list):
+        for o in target_order_sorted:
             if mo.username!=o.username:
                 if mo.flavor == "allornone" and o.flavor == "allornone":
                     if mo.quantity == o.quantity :
