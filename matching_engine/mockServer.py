@@ -36,6 +36,6 @@ def computePrices():
                 percent = random.uniform(-1,1)
                 stocks[key] += stocks[key]*percent/100
             count+=1
-        time.sleep(2)
+        time.sleep(3)
     
 _thread.start_new_thread(computePrices, ())

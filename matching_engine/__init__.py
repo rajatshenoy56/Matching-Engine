@@ -27,7 +27,7 @@ def hello():
 def loadData():
     global unmatched_orders
     global queue
-
+    print('unmatched')
     for order in UnMatched.query.all():
         stock = logic.Stock(
                             username   = order.username,
@@ -37,11 +37,14 @@ def loadData():
                             quantity   = order.quantity,
                             price      = order.price,
                             stock_code = order.stock_code,
-                            flavor     = order.flavor
+                            flavor     = order.flavor,
+                            trigger_price= (order.trigger_price or 0)
                            )
 
         unmatched_orders.append(stock)
+        print(json.dumps(stock.__repr__()))
         db.session.delete(order)
+    print('queued')
 
     for order in Queued.query.all():
         stock = logic.Stock(
@@ -52,11 +55,14 @@ def loadData():
                             quantity   = order.quantity,
                             price      = order.price,
                             stock_code = order.stock_code,
-                            flavor     = order.flavor
+                            flavor     = order.flavor,
+                            trigger_price= (order.trigger_price or 0)
                            )
 
         queue.enqueue(stock)
+        print(json.dumps(stock.__repr__()))
         db.session.delete(order)
+    print('inactive')
 
     for order in InActive.query.all():
         stock = logic.Stock(
@@ -67,10 +73,12 @@ def loadData():
                             quantity   = order.quantity,
                             price      = order.price,
                             stock_code = order.stock_code,
-                            flavor     = order.flavor
+                            flavor     = order.flavor,
+                            trigger_price= (order.trigger_price or 0)
                            )
 
         queue.enqueue(stock)
+        print(json.dumps(stock.__repr__()))
         db.session.delete(order)
 
     db.session.commit()
@@ -92,17 +100,23 @@ def place_order():
                         order_id    = randint(10000, 99999),
                         stock_code  = request.form['stock_code'],
                         trade_type  = request.form['trade_type'],
-                        price       = float(request.form['price']),
+                        price       = 0,
                         quantity    = int(request.form['quantity']),
                         order_type  = request.form['order_type'],
                         flavor      = request.form['flavor']
                        )
-    if(order.order_type == 'stop'):
-        order.trigger_price=order.price
+
+    if(order.order_type == 'stoplimit'):
+        order.trigger_price=float(request.form['trigger_price'])
+        order.price=float(request.form['price'])
+    elif(order.order_type == 'stop'):
+        order.trigger_price=float(request.form['trigger_price'])
+    else:
+        order.price=float(request.form['price'])
     queue.enqueue(order)
-
+    #print(order.price)
     match_list = queue.match(order)
-
+    #print(order.price)
     if (len(match_list) == 0):
         if (order.order_type == 'market'):
             unmatched_orders.append(order)
@@ -159,8 +173,8 @@ def history():
 @cross_origin()
 def edit():
     order_id = int(request.form['order_id'])
-
-    price = float(request.form['price'])
+    if(request.form['order_type'] != 'stop'):
+        price = float(request.form['price'])
     quantity = int(request.form['quantity'])
     flavor = request.form['flavor']
 
@@ -228,7 +242,8 @@ def saveData():
                                 quantity = order.quantity,
                                 price = order.price,
                                 stock_code = order.stock_code,
-                                flavor = order.flavor
+                                flavor = order.flavor,
+                                trigger_price= (order.trigger_price or 0)
                              )
 
         db.session.add(unmatched)
@@ -243,7 +258,8 @@ def saveData():
                                 quantity = order.quantity,
                                 price = order.price,
                                 stock_code = order.stock_code,
-                                flavor = order.flavor
+                                flavor = order.flavor,
+                                trigger_price= (order.trigger_price or 0)
                              )
             db.session.add(queued)
 
@@ -256,7 +272,8 @@ def saveData():
                                 quantity = order.quantity,
                                 price = order.price,
                                 stock_code = order.stock_code,
-                                flavor = order.flavor
+                                flavor = order.flavor,
+                                trigger_price= (order.trigger_price or 0)
                              )
             db.session.add(queued)
 

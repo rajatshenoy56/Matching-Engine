@@ -67,8 +67,10 @@ class Order_Queue(object):
     # Adding a new order.
     def enqueue(self, order):
         if order.order_type.lower() == "market" or order.order_type.lower() == "limit":
+            
             if order.stock_code not in self.active_list.keys():
                 self.active_list[order.stock_code] = {'Bid': [], 'Ask': []}
+                print('Heellllooo')
             self.active_list[order.stock_code][order.trade_type].append(order)
         else:
             if order.stock_code not in self.inactive_list.keys():
