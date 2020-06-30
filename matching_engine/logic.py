@@ -81,7 +81,10 @@ class Order_Queue(object):
     def activate(self,cmp):
         to_be_activated=[]
         for stock_code,orders in self.inactive_list.items():
-            to_be_activated = [x for x in orders if x.trigger_price >= cmp[stock_code]]
+
+            to_be_activated1 = [x for x in orders if x.trigger_price >= cmp[stock_code] and x.trade_type == 'Ask']
+            to_be_activated2 = [x for x in orders if x.trigger_price <= cmp[stock_code] and x.trade_type == 'Bid']
+            to_be_activated = to_be_activated1+to_be_activated2
             for order in to_be_activated:
                 self.inactive_list[stock_code].remove(order)
                 if order.order_type == 'stoplimit':#default set for market price
